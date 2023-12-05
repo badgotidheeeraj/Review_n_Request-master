@@ -1,0 +1,521 @@
+{% extends 'dashboard/shared/base.html' %}
+{% block container %}
+<!-- BEGIN: Content-->
+
+<div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper pt-0">
+       <div class="content-header row">
+       </div>
+       <div class="content-body">
+          <!-- Dashboard Analytics Start -->
+          <section id="dashboard-analytics">
+             <div class="main-dash row">
+                <div class="search-view col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 col-xxl-8 d-flex">
+                   <form action="javascript:void(0)" class="d-flex">
+                      <div class="search-req ">
+                         <h6 class="text-black fw-bolder" style="font-size: 12px;">Search for Request</h6>
+                         <div class="search-div d-flex">
+                            <div class="search-request-icon position-absolute text-black fs-6"
+                               style="padding: 8px 15px;"><i class="feather icon-search"></i></div>
+                            <input class="req-input rounded-2 " type="text" placeholder="Search"
+                               tabindex="-1" style="border: 1px solid #e6e6e6;box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;text-indent: 33px;
+                               height: 34px;">
+                         </div>
+                      </div>
+                      <div id="req-date">
+                         <h6 class="text-black fw-bolder mx-1" style="font-size: 12px;">Date</h6>
+                         <input type="text" name="dates" id="datepick" placeholder="Enter date"
+                            value=" Enter date" class="rounded-2 mx-1 "
+                            style="border: 1px solid #e6e6e6;padding: 6px 8px;
+                            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;">
+                      </div>
+                      <div class="view-cat pe-2">
+                         <h6 class="text-black fw-bolder" style="font-size: 12px;">Category</h6>
+                         <select class="form-select view-cat-select" aria-label="Default select example"
+                            style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;">
+                            <option selected>View All</option>
+                            <option value="Abstract">Abstract</option>
+                            <option value="Synopsis">Synopsis</option>
+                            <option value="Thesis">Thesis</option>
+                         </select>
+                      </div>
+                      <div class="refresh-btn mx-1 mt-2">
+                         <button type="reset" style="outline: none; border: none; background: transparent;">
+                         <i class="bi bi-arrow-clockwise"></i>
+                         </button>
+                      </div>
+                   </form>
+                </div>
+                <div
+                   class="dropdown new-req col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 col-xxl-4 d-flex justify-content-end mt-2">
+                   <button
+                      class="new-request dropdown-toggle d-flex justify-content-center align-items-center text-white rounded-2"
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                      style="background-color: #183268;box-shadow: rgba(44, 71, 107, 0.35) -3px 7px 12px;width: 175px; height: 32px;">
+                   <i class="bi bi-plus d-flex align-items-center fs-6" style="padding: 2px;"></i>
+                   New Request
+                   </button>
+                   <ul class="dropdown-menu rounded-1 p-0" id="newreq-menu"
+                      style="background-color: rgb(191, 228, 243);width: 175px;">
+                      {% for i in master %}
+                      <li>
+                         <a href="#" class="abst-link dropdown-item" data-toggle="modal" id="{{i.id}}"
+                            data-modulename="{{i.module_name}}" onclick="showModal(event)"
+                            data-target="#exampleModalCenter">{{i.module_name|title }}</a>
+                      </li>
+                      {% endfor %}
+                   </ul>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                   aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                   <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                      role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                           <h5 class="fw-bolder mb-0">
+                              Create a new Request for <span id="modalNameForRequest"><!-- Name from below script --></span>
+                           </h5>
+                       </div>
+                         <div class="modal-body px-3">
+                            <h6 class="pt-2 font-weight-bolder">Standard Request</h6> 
+                            <div>
+                               <div class="stnreq-1 position-relative d-flex justify-content-center align-items-center mt-1"
+                                  style="border: 1px solid rgb(207, 205, 205);border: 1px solid rgb(207, 205, 205);">
+                                  <a id="modalIdForRequest" class="text-white"><button type="button"
+                                     class="btn btn-primary btn-sm">Open
+                                  </button></a>
+                               </div>
+                               <p class="stnreq-2title ps-1" style="width: 130px;">{{i.module_name}}
+                               </p>
+                            </div>
+                            <div>
+                               <div class="d-flex justify-content-between">
+                                  <h6 class="pt-2 font-weight-bolder"> Recent Requests</h6>
+                                  <input type="text"
+                                     class="ag-grid-filter form-control w-25 mr-0 mb-0 mt-1 mb-sm-0 "
+                                     style="height: 24px; border-color: rgb(156, 155, 155);"
+                                     id="filter-text-box" placeholder="Search....">
+                               </div>
+                               <div class="request-whole-div">
+                                  <div class="request-scroller position-relative d-flex">
+                                     <div class="request-element py-1 pe-3">
+                                        <div class="stnreq-2 fw-2 position-relative d-flex justify-content-center align-items-center"
+                                           style="border: 1px solid rgb(207, 205, 205);">
+                                        </div>
+                                        <p class="stnreq-2title ps-1" style="width: 130px;">Title
+                                        </p>
+                                     </div>
+                                  </div>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </section>
+
+
+          <!-- Table list starts -->
+          <section id="allrequest-section" class="position-relative pb-2 pt-1">
+             <div class="row">
+                <div class="col-6">
+                   <h5 class="font-weight-bold my-1">All Request</h5>
+                </div>
+                <div class="col-6">
+                   <div class="d-flex align-items-center justify-content-end pt-1">
+                     <input type="checkbox" name="bookmark" id="bookmark" class="d-none" onclick="bookmark(event)">
+                     <label for="bookmark" onclick="favFunction(this)" class="fa-regular fa-star-o fa-lg me-3 cursor-pointer">
+                     </label>
+                      <i class="fa-solid fa-trash-can fa-lg cursor-pointer" id="trashbin" data-bs-toggle="modal"
+                         data-bs-target="#exampleModal"></i>
+                   </div>
+                </div>
+             </div>
+             <!-- Modal -->
+             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                   role="document">
+                   <div class="modal-content" style="width: 480px;height: 200px;">
+                      <div class="modal-header">
+                         <h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure?</h1>
+                            
+                      </div>
+                      <div class="modal-body">             
+                           <div id="display_request_name">No Request Selected</div>
+                        </div>
+                      <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Cancel</button>
+                         <a id="Seleted_delete" class="btn btn-primary">Delete</a>
+                      </div>
+                   </div>
+                </div>
+             </div>
+
+
+             <!-- Table starts -->
+             <div class="main-tab">
+                <table class="table-request" id="tabreq" style="width: 100%;">
+                   <thead>
+                      <tr class="request-tablehead font-weight-bolder rounded-2 d-flex mt-0 justify-content-between align-items-center "
+                         style="padding: 10px; border: 1px solid rgb(223, 216, 216);background-color: white;box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
+                         <th class="flex" rowspan="1" colspan="1">
+                            <fieldset>
+                               <div>
+                                  <input type="checkbox" class="form-check-input ms-1" style=" width: 20px; height:20px;margin-top: 0;position:relative;" value="false" id="selectAllCheckbox">
+                                  <label for="selectAllCheckbox" class="text-black ps-3 fs-6">Generated
+                                  Date</label>
+                               </div>
+                            </fieldset>
+                         </th>
+                         <th rowspan="1" colspan="1" style="width:150px;">Module <i class="feather icon-arrow-down"></i>
+                         </th>
+                         <th rowspan="1" colspan="1" style="width:270px;">Request Name</th>
+                         <th  style="width:300px;">About/Note</th>
+                         <th rowspan="1" colspan="1" style="width:100px;">Action</th>
+                      </tr>
+                   </thead>
+
+                    <tbody id="tableBody"></tbody>
+                </table>
+             </div>
+             <!-- DataTable ends -->
+
+             <!-- pagination start -->
+
+            <div class="row pre-next-btn mt-2" id="pagintab">
+					<div class="col-4 d-flex align-items-center justify-content-start">
+ 					  <a href="" id="prevBtn" data-page="" class="btn btn-outline-dark" style="height: 30px">Previous</a>
+					</div>
+				  
+					<div class="col-4 d-flex align-items-center justify-content-center text-black font-weight-bold" style="user-select: none;">
+					  <span>Page <span id="currenPage"> </span> of <span id="allPages"> </span></span>
+					</div>
+				  
+					<div class="col-4 d-flex align-items-center justify-content-end">
+					  <a href="" id="nextBtn" data-page="2" class="btn btn-outline-dark" style="height: 30px">Next</a>
+					</div>
+				</div>
+
+             <!-- pagination end -->
+          </section>
+          <!-- Data list view end --> 
+       </div>
+    </div>
+ </div>
+<!-- END: Content-->
+<script>
+   
+   function showModal(event) {
+      const modalIdForRequest = document.getElementById("modalIdForRequest");
+      const modalNameForRequest = document.getElementById("modalNameForRequest");
+      modalIdForRequest.href = `/create_request/${event.target.id}`;
+      modalNameForRequest.innerText = event.target.dataset.modulename;
+   }
+
+   const downloadPDF = (event)=>{
+      requestId = event.target.id;
+      $.ajax({
+         type: "POST",
+         url: `/create_request_pdf/`,
+         headers: {
+            'X-CSRFToken': '{% csrf_token %}'
+         },
+         responseType: 'text', 
+         data: {
+            id: requestId,
+         },
+         success: function (data) {          
+            var binaryData = atob(data);
+            var blob = new Blob([new Uint8Array(binaryData.split('').map(function (char) {
+                     return char.charCodeAt(0);
+                  }))], { type: 'application/pdf' });
+            var blobUrl = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = 'sample.pdf';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+         },
+         error: function (xhr, status, error) {
+            console.error('AJAX Error:', xhr.statusText);
+            console.error('Server Response:', xhr.responseText);
+         }
+      });
+   }
+
+   $(document).ready(function () {
+      let selectedIds = [];
+      $('#selectAllCheckbox').on('click', function () {
+		selectedIds=[]
+         $('.selecteditem:checked').each(function () {
+            selectedIds.push($(this).attr('id'));
+         });
+      });
+
+      $('.selecteditem').on('click', function () {
+         if ($(this).prop('checked')) {
+            let id = $(this).attr('id');
+            selectedIds.push(id);
+            console.log('Selected IDs:', selectedIds);
+         } else {
+            let id = $(this).attr('id');
+            let index = selectedIds.indexOf(id);
+            if (index !== -1) {
+               selectedIds.splice(index, 1); 
+               console.log('Selected IDs:', selectedIds);	
+            }
+         }
+      });
+
+      $(`#trashbin`).on(`click`, function () {
+         if (selectedIds.length>0) {  
+            $(`#display_request_name`).empty();
+            selectedIds.forEach(id => {
+               const request_name = document.getElementById(`request_name_${id}`);
+               $(`#display_request_name`).append(request_name.innerText + '<br>'); // Append text content with line break
+            });
+         } 
+         else
+         {
+            $(`#display_request_name`).empty();
+            $(`#display_request_name`).html('No Request Selected')
+
+
+         }
+      });
+      $('#Seleted_delete').on('click', function () {
+         
+
+         $.ajax({
+            type: "POST",
+            url: "/delete_all_request/",
+            headers: {
+               'X-CSRFToken': '{% csrf_token %}'
+            },
+            dataType: 'json',
+            data: {
+               'selected_ids[]': selectedIds
+            },
+            success: function (data) {
+               console.log("Success:", data);
+               location.reload();
+            },
+            error: function (xhr, status, error) {
+               console.error("AJAX request failed:", status, error);
+            }
+         });
+
+      });
+   });
+
+   $(document).on("load",fetchData(1))
+
+   $('#nextBtn').on('click', function (e) {
+      e.preventDefault();
+      const fav = document.getElementById('bookmark').checked
+      var page = e.target.dataset.page
+      if (fav) {
+         fetchData(page, true);
+      }else if(fav === false){
+         fetchData(page, false);
+      }
+   });
+   
+   // console.log(document.getElementById('bookmark').checked);
+   
+   $('#prevBtn').on('click', function (e) {
+      e.preventDefault();
+      const fav = document.getElementById('bookmark').checked
+      var page = e.target.dataset.page
+      if (fav) {
+         fetchData(page, true);
+      } else if (fav === false) {
+         fetchData(page, false);
+      }
+   });
+   
+   function bookmark(event) {
+      console.log(event.target.checked);
+      if (event.target.checked) {
+         fetchData(1, true);
+      }else{
+         fetchData(1, false);
+      }
+   }
+ 
+
+   function fetchData(page=1, is_fav=false) {
+      $('#tableBody').empty();
+       $.ajax({
+         url: `?page=${page}${is_fav?'&fav=true':''}`,
+         type: 'GET',
+         success: function (data) {
+            const requestList = data.requestList;
+            
+            const current_page = data.current_page;
+            const all_pages = data.all_pages;
+            const has_next = data.has_next;
+            const next_page_number = data.next_page_number;
+            const has_previous = data.has_previous;
+            const previous_page_number = data.previous_page_number;
+
+            requestList.forEach(element => {
+               
+               const originalDateString = element.created_at;
+               const is_favorite= element.is_favorite
+               const originalDate = new Date(originalDateString);
+
+               const day = originalDate.getDate().toString().padStart(2, '0');
+               const month = (originalDate.getMonth() + 1).toString().padStart(2, '0');
+               const year = originalDate.getFullYear();
+
+               const formattedDate = `${day}-${month}-${year}`;
+
+               const tableRow = `
+               <tr class="request-table font-weight-bold">
+                  <td class="flex">
+                     <fieldset>
+                        <div>
+                           <input type="checkbox" class="form-check-input ms-1 selecteditem" style=" width: 20px; height:20px;margin-top: 0;position:relative;" id="${element.id}" value="false">
+                           <span class="ps-3 font-weight-normal">${formattedDate}</span>
+                        </div>
+                     </fieldset>
+                  </td>
+                  <td class="font-weight-normal" style="width:150px;">${element.ModuleName.module_name}</td>
+                  <td class="font-weight-normal" style="width:270px;" id='request_name_${element.id}'>${element.request_name}</td>
+                  <td class="px-0" style="width:300px;">
+                     <div class="d-flex justify-content-between align-items-center writein">
+                        <input class="px-1 py-1 rounded-3" type="text" placeholder="Write something which maybe important" style="background: rgb(245, 244, 244); border: 1px solid rgb(213, 214, 214);width:94%;">
+                     </div>
+                  </td>
+                  <td class="px-0" style="width:100px;">
+                     <div class="d-flex justify-content-start align-items-center">
+                        <div class="dropdown delete-div ps-xxl-2 ps-xl-2 ps-lg-2 ps-md-1 ps-sm-1 ps-1">
+                           <button
+                              class="btn btn-outline-none dropdown-toggle position-relative d-flex justify-content-center align-items-center "
+                              type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="delete-req fa-solid fa-trash-can fa-lg px-1 "></i>
+                           </button>
+                           <ul class="dropdown-menu del-conf-ul rounded-2"
+                              style="border: 1px solid orangered;background-color: rgb(245, 245, 245);inset:0px auto auto ">
+                              <li>
+                                 <a class="dropdown-item" href="#">
+                                    <div class="del-conf">
+                                       <h6 class="text-black d-flex justify-content-center align-items-center px-1 fw-bolder fs-6">
+                                          Are you sure?</h6>
+                                       <div class="row w-100 m-0">
+                                          <div class="col-6 d-flex justify-content-center align-items-center del-opt del-opt-yes">
+                                             <a href="/delete_request/${element.id}" class="text-black">
+                                                <div class="font-weight-bold px-1 rounded-1"
+                                                   style="font-size: 11px;padding: 2px; height: 20px;border:1px solid black;"> Yes
+                                                </div>
+                                             </a>
+                                          </div>
+                                          <div class="col-6 d-flex justify-content-center align-items-center del-opt del-opt-no">
+                                             <a href="#" class="text-black" style="margin-top:2px;">
+                                                <div class="font-weight-bold px-1 rounded-1"
+                                                   style="font-size: 11px; height: 20px;border:1px solid black; padding: 2px;"
+                                                   data-bs-dismiss="del-conf-ul">
+                                                   No
+                                                </div>
+                                             </a>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </a>
+                              </li>
+                           </ul>
+                        </div>
+                        <div class="edit-div pe-1 d-flex justify-content-center align-items-center position-relative ">
+                           <a href="/update_request/${element.id}" class="text-decoration-none text-black"><i
+                                 class="fa-solid fa-pen-to-square fa-lg"></i></a>
+                        </div>
+                        <div class="dropdown showmore-div">
+                           <button
+                              class="btn btn-outline-none dropdown-toggle position-relative p-0 d-flex justify-content-center align-items-center"
+                              type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 15px;">
+                              <i class="vertical-dot bi bi-three-dots-vertical pl-1 "></i>
+                           </button>
+                           <ul class="dropdown-menu showmore-opt p-0"
+                              style="border: 1px solid rgb(211, 238, 252);background-color: rgb(206, 236, 252);width: 50px;font-size: 10px;transform: translate(10px, 52px) !important;">
+                              <li><a class="dropdown-item" id='${element.id}' onclick='downloadPDF(event)'>Download</a></li>
+                              ${
+                                 is_favorite 
+                                 ? `<li><a class="dropdown-item truevalue text-danger" id="${element.id}" onclick="toggleFavorite(event, false)">Remove Favorite</a></li>` 
+                                 : `<li><a class="dropdown-item" id="${element.id}" onclick="toggleFavorite(event, true)">Add Favorite</a></li>`
+                              }
+                              </li>
+                           </ul>
+                        </div>
+                     </div>
+                  </td>
+               </tr>
+               `;
+
+               $('#tableBody').append(tableRow)
+            });
+            
+            if (has_next) {
+               $('#nextBtn').show();
+               $('#nextBtn').attr('data-page', next_page_number)
+            }else if(has_next == false){
+               $('#nextBtn').hide();
+            }
+
+            if (has_previous) {
+               $('#prevBtn').show();
+               $('#prevBtn').attr('data-page', previous_page_number)
+            }else if(has_previous == false){
+               $('#prevBtn').hide();
+            }
+
+            $('#currenPage').text(current_page);
+            $('#allPages').text(all_pages);
+
+         },
+         error: function (error) {
+            console.log('error===>', error);
+         }
+      });
+   }
+
+
+   const toggleFavorite = (event, isAdding) => {
+      const requestId = event.target.id;      
+      $.ajax({
+         type: "POST",
+         url: `/add_favorite_request/`,
+         headers: {
+               'X-CSRFToken': '{% csrf_token %}'
+         },
+         responseType: 'json',
+         data: {
+               id: requestId,
+               isFavorite: isAdding
+         },
+         success: function (data) {
+            const currentPage = document.getElementById('currenPage').innerText;
+            if (document.getElementById('bookmark').checked) {
+               fetchData(currentPage, true)
+            }else{
+               fetchData(currentPage)
+            }
+         },
+         error: function (xhr, status, error) {
+               console.error('AJAX Error:', xhr.statusText);
+               console.error('Server Response:', xhr.responseText);
+         }
+      });
+   };
+
+
+</script>
+{% endblock %}

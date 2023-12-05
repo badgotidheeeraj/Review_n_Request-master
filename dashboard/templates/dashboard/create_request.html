@@ -1,0 +1,472 @@
+{% extends 'dashboard/shared/base.html' %}
+{% block container %}
+<!-- BEGIN: Content-->
+<div class="app-content content">
+<div class="content-overlay"></div>
+<div class="header-navbar-shadow"></div>
+<div class="content-wrapper pt-0">
+   <div class="content-header row">
+   </div>
+   <div class="content-body" style="font-family: 'Poppins', sans-serif;">
+      <!-- Dashboard Abstract Start -->
+      <section>
+         <div class="row">
+            <div class="col-6">
+               <h4 class="font-weight-bold" style="font-size: 16px;">Request/ {{selectedModule.module_name}}</h4>
+            </div>
+            <!-- <div class="col-6 "></div> -->
+         </div>
+         <!-- General Point -->
+         <div class="row" style="margin-top:28px;">
+            <div class="col-4 general-points" style="position:relative;">
+               <div class="rounded-3 text-white generalpoints-heading"
+                  style="position:absolute; z-index: 1; background-color: #FF0000; padding: 5px 24px; color: #FFFFFF;font-weight: 600;">
+                  General Point
+               </div>
+               <div class="card">
+                  <div class="card-body"  style="overflow-y: auto;height:76vh;position:relative">
+                     {% load custom_filters %}
+                     {% for subk, subv in generalPoint.items %}
+                     <div style="margin-top: 7px;">
+                        <label class="form-check-label fs-6 fw-bold mr-3" for="Font">
+                        {{subk}}
+                        </label>
+                        <input class="form-check-input" style=" width: 20px; height:20px;margin-top: 0;"
+                           type="checkbox"  name='parent_General_checkboxes'
+                           id="{{subk|hyphanate}}" value="{{subk}}" checked>
+                     </div>
+                     {% for k,v in subv.items %}
+                     <div class="row align-items-center pt-1">
+                        <div class="col-md-6 ">
+                           <fieldset>
+                              <div class="custom-control custom-checkbox">
+                                 <input type="checkbox" class="custom-control-input" checked=""
+                                    name="{{subk|hyphanate}}_General_child_checkboxes"value="{{k}}" id="{{k|hyphanate}}"
+                                    id="Font Style">
+                                 <label class="custom-control-label text-dark fw-bold"
+                                    for="{{k|hyphanate}}">{{k}}</label>
+                              </div>
+                           </fieldset>
+                        </div>
+                        <div class="col-md-6">
+                           <fieldset class="form-group">
+                              <select class="form-select" id="basicSelect"
+                                 name="{{subk|hyphanate}}_General_child_selectboxes"
+                                 aria-label="Default select example">
+                              {% for resourceKey, resourceValue in resources.items %}
+                              {% if resourceKey == k %}
+                              {% for item in resourceValue %}
+                              <option value="{{item}}" {% if v == item %} selected {% endif %}>
+                              {{item}}</option>
+                              {% endfor %}
+                              {% endif %}
+                              {% endfor %}
+                              </select>
+                           </fieldset>
+                        </div>
+                     </div>
+                     {% endfor %}
+                     {% endfor %}
+                     <!-- add attribute button -->
+                     <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn rounded-5"
+                           style="background-color: #2fc5d6;color:white;"><i
+                           class="bi bi-plus-lg"></i>Add Attribute</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- Technical Point -->
+            <div class="col-4 technical-points" style="position:relative;">
+               <div class="rounded-3 text-white technicalpoints-heading"
+                  style=" padding: 5px 24px; color: #FFFFFF;font-weight: 600;position:absolute; z-index: 1;background: #23B40C ;">
+                  Technical Point
+               </div>
+               <div class="card">
+                  <div class="card-body" style="overflow-y: auto;height:76vh;position:relative">
+                     <form id="myForm">
+                        {% for subk, subv in technicalPoint.items %}
+                        <div style="margin-top: 7px;">
+                           <label class="form-check-label fs-6 fw-bold mr-3"
+                              for="Additional Parameters">
+                           {{subk}}
+                           </label>
+                           <input class="form-check-input"
+                              style=" width: 20px; height:20px;margin-top: 0;" type="checkbox"
+                              name='parent_Technical_checkboxs'
+                              id="{{subk|hyphanate}}" value="{{subk}}" checked>
+                        </div>
+                        {% for k,v in subv.items %}
+                        <div class="row align-items-center pt-1">
+                           <div class="col-md-6 ">
+                              <fieldset>
+                                 <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input"
+                                       name="{{subk|hyphanate}}_Technical_child_checkboxes"
+                                       value="{{k}}" checked id="{{k|hyphanate}}" checked="">
+                                    <label class="custom-control-label" for="{{k|hyphanate}}">{{k}}</label>
+                                 </div>
+                              </fieldset>
+                           </div>
+                           <div class="col-md-6">
+                              <fieldset class="form-group">
+                                 <select class="form-select" id="basicSelect"
+                                    name="{{subk|hyphanate}}_Technical_child_selectboxes"
+                                    aria-label="Default select example" style="font-size: 12px;">
+                                 {% for resourceKey, resourceValue in resources.items %}
+                                 {% if resourceKey == k %}
+                                 {% for item in resourceValue %}
+                                 <option value="{{item}}" {% if v == item %}selected{% endif %}>
+                                 {{item}}</option>
+                                 {% endfor %}
+                                 {% endif %}
+                                 {% endfor %}
+                                 </select>
+                              </fieldset>
+                           </div>
+                        </div>
+                        {% endfor %}
+                        {% endfor %}
+                        <!-- add note -->
+                        <div class="row px-0 mt-1">
+                           <h6 style="font-weight: 700;">Add Note Or Other Attribute(If Any)
+                           </h6>
+                        </div>
+                        <div class="row  mt-1 px-1">
+                           <textarea id="new-message" rows="3" class="border-0 rounded-2"
+                              style="resize: none;  border-radius: 2px; color: rgb(2, 2, 2); background-color: rgb(239, 240, 240);"></textarea>
+                           <p class="mt-1 mb-0 p-0 font-weight-bold"> Lorem ipsum dolor sit amet consectetur
+                              elit. Ratione ugiyhj vero aut magnam iusto natus animi 
+                           </p>
+                        </div>
+                        <!-- add attribute button -->                        
+						<div class="d-flex justify-content-end mt-3">
+							<button type="button" class="btn rounded-5"
+							   style="background-color: #2fc5d6;color:white;"><i
+							   class="bi bi-plus-lg"></i>Add Attribute</button>
+						 </div>
+                     </form>
+                  </div>
+               </div>
+            </div>
+            <!-- pdf section -->
+            <div class="col-4 pdf-section">
+               <div class="card border border-dark rounded-0 mb-1">
+                  <div class="card-body pt-0 px-1 pb-1" style="overflow-y: auto;height:76vh;">
+                     <div class="row text-start">
+                        <h6 class="m-0" style="font-size: 9px;padding: 5px 14px 1px;color: #0000008e;">
+                           Generated by
+                           Jatin
+                        </h6>
+                        <hr class="border-1 border-dark border-1 m-0 p-0 opacity-50">
+                        <h6 class="text-center" style="margin-top: 4px;">Format for Abstract</h6>
+                        <!----------------------------------general result---------------- -->
+                        <div class="col-6">
+                           <div class="border-1 border-black rounded-3 text-center me-lg-4 me-md-2 me-sm-0 me-0"
+                              style="padding: 3px 2px;font-size: 11px;color:white;background-color: #FF0000;">
+                              General
+                              Points
+                           </div>
+                           <div>
+                              <div id="preview"
+                                 style="font-size: 10px;line-height: 15px; letter-spacing: 0.7px;">
+                                 <!-- Data from t2.Font will be displayed here -->
+                              </div>
+                           </div>
+                        </div>
+                        <!------------------------------------------technical result----------- -->
+                        <div class="col-6">
+                           <div class="border-1 border-black rounded-3 text-center me-lg-4 me-md-2 me-sm-0 me-0"
+                              style="padding: 3px 2px;font-size: 11px;;background-color: #23B40C;color:white">
+                              Technical
+                              Points
+                           </div>
+                           <div>
+                              <div id="preview_display_for_technical"
+                                 style="font-size: 10px;line-height: 15px; letter-spacing: 0.6px;">
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div>
+                  <button type="button" id="save"
+                     class="btn btn-outline-dark float-end font-weight-bolder abs-savebtn"
+                     style="padding: 8px 40px;border-radius: 10px;" data-bs-toggle="modal"
+                     data-bs-target="#exampleModal">Save</button>
+               </div>
+               <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                  aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                     role="document">
+                     <div class="modal-content" style="width: 480px;">
+                        <div class="modal-header">
+                           <h1 class="modal-title fs-5" id="exampleModalLabel">Create Request Name</h1>
+                           <button type="button" class="btn-close" data-bs-dismiss="modal"
+                              aria-label="Close"></button>
+                        </div>
+                        <form method="POST" autocomplete="off" id="request_creation_form">
+                           <div class="modal-body">
+								<div class="row">
+									<div class="col-12">
+										<input type="text" class="form-control align-content-center" name="requestName" id="requestName" required
+										placeholder="Request Name">
+										<span id="duplicatename" class='text-danger'></span>                                      
+									</div>
+								</div>
+                           </div>
+                           <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary"
+                                 data-bs-dismiss="modal">Cancel</button>
+                              {% comment %} <a href="show_all_request.html" class="text-decoration-none text-white "> {% endcomment %}
+                              <button type="submit" class="btn btn-primary">Save</button>
+                              {% comment %} </a> {% endcomment %}
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+   </div>
+</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		var csrfToken = "{{ csrf_token }}";
+		var moduleId = "{{selectedModule.id}}";
+
+		document.addEventListener('DOMContentLoaded', function () {
+			jsonData = {
+				'General Point': {},
+				'Technical Point': {},
+			};
+
+			function preview_display() {
+				const general_preview = document.getElementById("preview");
+				const techmical_preview = document.getElementById("preview_display_for_technical");
+				general_preview.innerHTML = "";
+				techmical_preview.innerHTML = "";
+
+				// preview for General Points....
+
+				for (const general_key in jsonData["General Point"]) {
+
+					const general_header = document.createElement("span");
+					general_header.innerHTML = `<br><u>${general_key}<u>:-<br>`;
+					general_preview.appendChild(general_header);
+
+					const general_value = jsonData["General Point"][general_key];
+
+					for (const general_keys in general_value) {
+						const span = document.createElement("span");
+						span.innerHTML = `<strong>${general_keys}:</strong> ${general_value[general_keys]}<br>`;
+						general_preview.appendChild(span);
+					}
+				}
+
+				// preview for Technical Points....
+
+				for (const technical_key in jsonData["Technical Point"]) {
+
+					const technical_header = document.createElement("span");
+					technical_header.innerHTML = `<br><u>${technical_key}<u>:-<br>`;
+					techmical_preview.appendChild(technical_header);
+
+					const technical_value = jsonData["Technical Point"][technical_key];
+
+					for (const technical_keys in technical_value) {
+						const span1 = document.createElement("span");
+						span1.innerHTML = `<strong>${technical_keys}:</strong> ${technical_value[technical_keys]}<br>`;
+						techmical_preview.appendChild(span1);
+					}
+				}
+				
+			}
+
+			// Start General Point
+			const parent_General_checkboxes = document.querySelectorAll('input[name="parent_General_checkboxes"]');
+
+			parent_General_checkboxes.forEach(function (checkbox) {
+
+				//call function....
+				checked_function_for_General(checkbox);
+
+				// Pass a function reference to addEventListener
+				checkbox.addEventListener('change', function () {
+					checked_function_for_General(checkbox); // Call checked_function(checkbox) when the checkbox changes
+				});
+			});
+
+			function checked_function_for_General(checkbox) {
+				const checkboxValue = checkbox.value;
+				const checkboxes = document.querySelectorAll('input[name="' + checkbox.id + '_General_child_checkboxes"]');
+				const selectboxes = document.querySelectorAll('select[name="' + checkbox.id + '_General_child_selectboxes"]');
+				if (checkbox.checked) {
+					if (!jsonData['General Point'][checkboxValue]) {
+						jsonData['General Point'][checkboxValue] = {};
+					}
+
+					// for child checkboxes
+					checkboxes.forEach(function (checkbox, index) {
+						// for the individual data entry and delete...
+						checkbox.addEventListener('change', function () {
+							if (checkbox.checked) {
+								selectboxes[index].disabled = false;
+								jsonData['General Point'][checkboxValue][checkbox.value] = selectboxes[index].value;
+								preview_display();
+							} else {
+								selectboxes[index].disabled = true;
+								delete jsonData['General Point'][checkboxValue][checkbox.value];
+								preview_display();
+							}
+						});
+						checkbox.disabled = false;
+						checkbox.checked = true;
+						selectboxes[index].disabled = false;
+						jsonData['General Point'][checkboxValue][checkbox.value] = selectboxes[index].value;
+						preview_display();
+
+						selectboxes[index].addEventListener('change', function () {
+							// Update the value in jsonData when select changes
+							jsonData['General Point'][checkboxValue][checkbox.value] = selectboxes[index].value;
+							preview_display();
+						});
+					});
+				} else {
+					checkboxes.forEach(function (checkbox, index) {
+						checkbox.disabled = true;
+						checkbox.checked = false;
+						selectboxes[index].disabled = true;
+						delete jsonData['General Point'][checkboxValue];
+						preview_display();
+					});
+				}
+			}
+
+			//End General point
+
+			//Start technical Point
+			const parent_Technical_checkboxes = document.querySelectorAll('input[name="parent_Technical_checkboxs"]');
+
+			parent_Technical_checkboxes.forEach(function (checkbox) {
+
+				//call function for Technical
+				checked_function_for_Technical(checkbox);
+
+				//for all parent checkboxes...
+				checkbox.addEventListener('change', function () {
+
+					checked_function_for_Technical(checkbox);
+
+				});
+			});
+
+			//implement function for Technical
+
+			function checked_function_for_Technical(checkbox) {
+				`    `
+				const checkboxValue = checkbox.value;
+				const checkboxes1 = document.querySelectorAll('input[name="' + checkbox.id + '_Technical_child_checkboxes"]');
+				const selectboxes2 = document.querySelectorAll('select[name="' + checkbox.id + '_Technical_child_selectboxes"]');
+				if (checkbox.checked) {
+					if (!jsonData['Technical Point'][checkboxValue]) {
+						jsonData['Technical Point'][checkboxValue] = {};
+					}
+
+					// for child checkboxes
+					checkboxes1.forEach(function (checkbox, index) {
+						// for the individual data entry and delete...
+						checkbox.addEventListener('change', function () {
+							if (checkbox.checked) {
+								selectboxes2[index].disabled = false;
+								jsonData['Technical Point'][checkboxValue][checkbox.value] = selectboxes2[index].value;
+								preview_display();
+							} else {
+								selectboxes2[index].disabled = true;
+								delete jsonData['Technical Point'][checkboxValue][checkbox.value];
+								preview_display();
+							}
+						});
+						checkbox.disabled = false;
+						checkbox.checked = true;
+						selectboxes2[index].disabled = false;
+						jsonData['Technical Point'][checkboxValue][checkbox.value] = selectboxes2[index].value;
+						preview_display();
+
+						selectboxes2[index].addEventListener('change', function () {
+							// Update the value in jsonData when select changes
+							jsonData['Technical Point'][checkboxValue][checkbox.value] = selectboxes2[index].value;
+							preview_display();
+						});
+					});
+				} else {
+					checkboxes1.forEach(function (checkbox, index) {
+						checkbox.disabled = true;
+						checkbox.checked = false;
+						selectboxes2[index].disabled = true;
+						delete jsonData['Technical Point'][checkboxValue];
+						preview_display();
+					});
+				}
+			}
+
+			// for data display
+
+			function isEmptyObject(obj) {
+				for (var key in obj) {
+					if (obj.hasOwnProperty(key)) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			$(document).ready(function () {
+				// Capture the form submission event
+				if (!isEmptyObject(jsonData)) {
+					$("#request_creation_form").submit(function (event) {
+						const requestSchema = JSON.stringify(jsonData);
+						const requestName = document.getElementById('requestName').value;
+
+						// Prevent the default form submission
+						event.preventDefault();
+
+						// Send the data via Ajax
+						$.ajax({
+							type: "POST",
+							url: `{% url 'create_request' selectedModule.id %}`, // Replace with the actual URL
+							data: {
+								data: requestSchema,
+								request: requestName,
+							},
+							headers: {
+								'X-CSRFToken': csrfToken
+							},
+							success: function (response) {
+								if (response.success) {
+									window.location.href = "/show_all_request/";
+								}
+                        else{
+                           $("#duplicatename").html(response.message)
+                        }
+							},
+							error: function (xhr, status, error) {
+                        		$("#duplicatename").html(`Error occurred`)
+                    		}
+						});
+					});
+				}
+			});
+
+			preview_display();
+		});
+
+
+	</script>
+</div>
+<!-- END: Content-->
+
+{% endblock %}

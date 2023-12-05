@@ -1,0 +1,101 @@
+{% extends 'dashboard/shared/base.html' %}
+{% block container %}
+
+<!-- BEGIN: Content-->
+<div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h4 class="card-title mb-2">Dashboard health</h4>
+                        </div>
+                        <div>
+                            <ul class="nav nav-tabs tab-no-active-fill" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active ps-2 pe-2" id="pending-action-tab" data-bs-toggle="tab" href="#pending-action" role="tab" aria-controls="pending-action" aria-selected="false">Pending Action</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link ps-2 pe-2" id="issues-tab" data-bs-toggle="tab" href="#issues" role="tab" aria-controls="issues" aria-selected="true">Issues</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content tab-no-active-fill-tab-content">
+                                <div class="tab-pane fade show active" id="pending-action" role="tabpanel" aria-labelledby="pending-action-tab">
+                                    <ol style="padding-left: 1rem;">
+                                        <li class="">
+                                            <div class="d-lg-flex">
+                                                <p class="mb-4">Complete your profile <a href="#" style="color: #7367F0;" class="text-decoration-underline">click here</a></p>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                    {% comment %} <div class="d-lg-flex">
+                                        <p class="mb-4">No Pending Actions.</p>
+                                    </div> {% endcomment %}
+                                    
+                                </div>
+                                <div class="tab-pane fade" id="issues" role="tabpanel" aria-labelledby="issues-tab">
+                                    <div class="d-lg-flex">
+                                        <p class="mb-4">No Issues.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="card-title">Total Requests</h5>
+                            </div>
+                            <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                <h2 class="fw-bold mb-0" style="color: #7367F0;">{{context.total_requests}}</h2>
+                                <i class="bi bi-stack fs-1 d-flex"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="card-title">Total Reviews</h5>
+                            </div>
+                            <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                <h2 class="fw-bold mb-0" style="color: #7367F0;">{{context.total_reviews}}</h2>
+                                <i class="bi bi-square-half fs-1 d-flex"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="card-title">Total Shares</h5>
+                            </div>
+                            <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                <h2 class="fw-bold mb-0" style="color: #7367F0;">0</h2>
+                                <i class="bi bi-share-fill fs-1 d-flex"></i>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

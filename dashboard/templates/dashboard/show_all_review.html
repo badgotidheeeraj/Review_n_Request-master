@@ -1,0 +1,845 @@
+{% extends 'dashboard/shared/base.html' %}
+
+{% block container %}
+
+<!-- BEGIN: Content-->
+<div class="app-content content">
+	<div class="content-overlay"></div>
+	<div class="header-navbar-shadow"></div>
+	<div class="content-wrapper pt-0">
+		<div class="content-header row">
+		</div>
+		<div class="content-body">
+
+			{% load custom_filters %}
+			<!-- Dashboard Analytics Start -->
+			<section id="dashboard-analytics">
+				<div class="main-dash row">
+					<div class="search-view col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 col-xxl-8 d-flex">
+						<form method="get" action="{% url 'show_all_review' %}" class="d-flex" id="searchForm">
+							<div class="search-req ">
+								<h6 class="text-black fw-bolder" style="font-size: 12px;">Search for Review</h6>
+								<div class="search-div d-flex">
+									<div class="search-request-icon position-absolute text-black fs-6"
+										style="padding: 8px 15px;"><i class="feather icon-search"></i></div>
+									<input class="req-input rounded-2 " type="text" placeholder="Search" name="search"
+										tabindex="-1" style="border: 1px solid #e6e6e6;box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;text-indent: 33px;
+										height: 34px;" value="" id="">
+								</div>
+							</div>
+
+							{% comment %} <div id="resultContainer">
+								<!-- Search Results will be displayed here -->
+							</div> {% endcomment %}
+
+
+							<div id="req-date">
+								<h6 class="text-black fw-bolder mx-1" style="font-size: 12px;">Date</h6>
+								<input type="text" name="dates" id="datepick" placeholder="Enter date" value=""
+									class="rounded-2 mx-1" style="border: 1px solid #e6e6e6;padding: 6px 8px;
+									box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;">
+							</div>
+
+							<div class="view-cat pe-2">
+								<h6 class="text-black fw-bolder" style="font-size: 12px;">Category</h6>
+								<select class="form-select view-cat-select" aria-label="Default select example"
+									style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px; ">
+									<option selected>View All</option>
+									<option value="Abstract">Abstract</option>
+									<option value="Synopsis">Synopsis</option>
+									<option value="Thesis">Thesis</option>
+								</select>
+							</div>
+							<div class="refresh-btn mx-1 mt-2">
+								<button type="reset" style="outline: none; border: none; background: transparent;">
+									<i class="bi bi-arrow-clockwise"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+
+					<div
+						class="dropdown new-req col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 col-xxl-4 d-flex justify-content-end mt-2">
+						<button
+							class="new-request dropdown-toggle d-flex justify-content-center align-items-center text-white rounded-2"
+							type="button" data-bs-toggle="dropdown" aria-expanded="false"
+							style="background-color: #183268;box-shadow: rgba(44, 71, 107, 0.35) -3px 7px 12px;width: 175px; height: 32px;">
+							New Review
+						</button>
+						<ul class="dropdown-menu rounded-1 p-0" id="newreq-menu"
+							style="background-color: rgb(191, 228, 243);width: 175px;">
+							{% for i in modulesList %}
+							<li>
+								<a href="#" class="abst-link dropdown-item" data-toggle="modal" id="{{i.id}}"
+									data-modulename="{{i.module_name}}" onclick="showModal(event)"
+									data-target="#exampleModalCenter">
+									{{i.module_name}}
+								</a>
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+
+					<!-- modal -->
+					<div class="modal fade model_field" id="exampleModalCenter" tabindex="-1" role="dialog"
+						aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+							role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="fw-bolder mb-0">
+										Create a new Review for <span
+											id="modalNameForReview"><!-- Name from below script --></span> Module
+									</h5>
+								</div>
+								<div class="modal-body px-3">
+									<!-- standard request from master module  -->
+									<form action="{% url 'create_master_review'%}" enctype="multipart/form-data"
+										method="post" id="uploadabst-form">
+										{% csrf_token %}
+										<div>
+											<h6 class="pt-2 font-weight-bolder">Standard Request</h6>
+											<div class="stnreq-1 position-relative d-flex justify-content-center align-items-center mt-1"
+												style="border: 1px solid rgb(207, 205, 205);border: 1px solid rgb(207, 205, 205);">
+												<label for="standard_requestID" type="button"
+													class="select_request btn btn-primary btn-sm">Standard</label>
+												<input type="radio" name="request_name" id="standard_requestID"
+													required>
+											</div>
+											<p class="stnreq-2title ps-1" style="width: 130px;">Standard</p>
+											<div class="ps-0 pb-2 d-flex justify-content-between" id="selectionbox">
+												<input type="file" name="docx_file" id="uploadabststandard" required>
+												<input type="submit" value="Upload" id="submitabststandard">
+											</div>
+										</div>
+									</form>
+
+
+									<!-- custom Request from user generation  -->
+									<form action="{% url 'create_custom_review' %}" enctype="multipart/form-data"
+										method="post" id="uploadabst-form">
+										{% csrf_token %}
+										<div>
+											<div class="d-flex justify-content-between">
+												<h6 class="pt-2 font-weight-bolder"> Recent Request</h6>
+												<input type="text"
+													class="ag-grid-filter form-control w-25 mr-0 mb-0 mt-1 mb-sm-0"
+													style="height: 24px; border-color: rgb(156, 155, 155);"
+													id="filter-text-box" placeholder="Search....">
+											</div>
+
+
+											<div class="d-flex">
+												<div class="request-scroller position-relative d-flex"
+													id="customRequestForReview">
+													<!-- dynamic request here from below (don't do anything here) -->
+
+												</div>
+											</div>
+											<div class="ps-0 pt-1 pb-2 d-flex justify-content-between"
+												id="selectionbox">
+												<input type="file" name="docx_file" id="uploadabstrecent" required>
+												<input type="submit" value="Upload" id="submitabstrecent">
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Table list starts -->
+			<section id="allrequest-section" class="position-relative pb-2 pt-1">
+				<div class="row">
+					<div class="col-6">
+						<h5 class="font-weight-bold my-1">All Reviews</h5>
+					</div>
+					<div class="col-6">
+						 <div class="d-flex align-items-center justify-content-end pt-1">
+                     <input type="checkbox" name="bookmark" id="bookmark" class="d-none" onclick="bookmark(event)">
+                     <label for="bookmark" onclick="favFunction(this)" class="fa-regular fa-star-o fa-lg me-3 cursor-pointer">
+                     </label>
+                      <i class="fa-solid fa-trash-can fa-lg cursor-pointer" id="trashbin" data-bs-toggle="modal"
+                         data-bs-target="#exampleModal">
+					</i>
+                   </div>
+					</div>
+				</div>
+
+				<!-- Modal -->
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+						role="document">
+						<div class="modal-content" style="width: 480px;height: 190px;">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure ?</h1>
+							</div>
+							<div class="modal-body">             
+                           <div id="display_review_name">
+							No Review Selected</div>
+                        </div>
+                      <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Cancel</button>
+                         <a id="deleteselected" class="btn btn-primary">Delete</a>
+                      </div>
+						</div>
+					</div>
+				</div>
+
+				<!-- DataTable starts -->
+				<div class="main-tab">
+					<table class="table-request " style="width: 100%;">
+						<thead>
+							<tr class="request-tablehead font-weight-bolder rounded-2 d-flex mt-0  justify-content-between align-items-center"
+								style="padding: 10px; border: 1px solid rgb(223, 216, 216);background-color: white;box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
+								<th class="flex" rowspan="1" colspan="1">
+									<fieldset>
+										<div>
+											<input type="checkbox" class="form-check-input ms-1"
+												style=" width: 20px; height:20px;margin-top: 0;position:relative;"
+												value="false" id="selectAllCheckbox">
+											<label for="selectAllCheckbox" class="text-black ps-3 fs-6">Generated
+												Date</label>
+										</div>
+									</fieldset>
+								</th>
+								<th rowspan="1" colspan="1" style="width:146px">Review Name</th>
+								<th rowspan="1" colspan="1">Request Name</th>
+								<th rowspan="1" colspan="1" style="width:230px">File Name</th>
+								<th rowspan="1" colspan="1" style="width:110px">Review Type</th>
+								<th rowspan="1" colspan="1" style="width:100px">Status</th>
+								<th rowspan="1" colspan="1" style="width:100px">Action</th>
+
+							</tr>
+						</thead>
+						
+						<tbody id="tableBody">
+							<!-- {% for i in  reviewList %}
+							<tr class="request-table font-weight-bold" style="padding: 10px;">
+								<a href="#">
+									<td class="flex">
+										<fieldset>
+											<div>
+												<input type="checkbox" class="form-check-input ms-1" style=" width: 20px; height:20px;margin-top: 0;position:relative;" value="false" id="selectAllCheckbox">
+												<span class="ps-3 font-weight-normal">{{i.created_at| date:"d M Y"}}</span>
+											</div> 
+										</fieldset>
+									</td>
+									<td class="font-weight-normal" style="width:146px">{{i.review_name |title}}</td>
+									<td class="font-weight-normal">{{i.request_name|title}}</td>
+									<td class="font-weight-normal" style="width:230px">{{i.docx_file|extract_file_name|truncate_string:30}}</td> 
+									<td class="font-weight-normal"  style="width:110px">
+										{{i.review_type|title}}
+									</td>
+									<td class="font-weight-normal review-status-td"  style="width:100px">
+										<div class="review-status text-white " >Done</div>
+									</td>
+									<td class="p-0"  style="width:100px">
+										<div class="d-flex justify-content-start align-items-center">
+											<div class="dropdown delete-div ps-xxl-0 ps-xl-0 ps-lg-0 ps-md-2 ps-sm-2 ps-2">
+												<button
+													class="btn btn-outline-none dropdown-toggle position-relative d-flex justify-content-center align-items-center"
+													type="button" data-bs-toggle="dropdown" aria-expanded="false"
+													>
+													<i class="delete-req fa-solid fa-trash-can fa-lg px-1 "></i>
+												</button>
+												<ul class="dropdown-menu del-conf-ul rounded-2"
+													style="border: 1px solid orangered;background-color: rgb(245, 245, 245);">
+													<li>
+														<a class="dropdown-item" href="#">
+															<div class="del-conf">
+																<h6 class="text-black d-flex justify-content-center align-items-center px-1 fw-bolder fs-6">
+																	Are you sure?
+																</h6>
+																<div class="row w-100 m-0">
+																	<div class="col-6 d-flex justify-content-center align-items-center del-opt del-opt-yes">
+																		<a href="{% url 'delete_review' i.id%}" class="text-black" style="margin-top:2px;">
+																		<div  class="font-weight-bold px-1 rounded-1" style="font-size: 11px; height: 20px;border:1px solid black;padding: 2px;">
+																			 Yes
+																		  </div> </a>
+																	</div>
+																	<div class="col-6 d-flex justify-content-center align-items-center del-opt del-opt-no">
+																		<a href="#" class="text-black" 	style="margin-top:2px;">
+																		<div class=" font-weight-bold px-1 rounded-1 bord" style="font-size: 11px; height: 20px;border:1px solid black;padding: 2px;" data-bs-dismiss="del-conf-ul">
+																			 No 
+																		 </div></a>
+																	</div>
+																</div>
+															</div>
+														</a>
+													</li>
+												</ul>
+											</div>
+											<div
+                                   				class="edit-div pe-1 d-flex justify-content-center align-items-center position-relative ">
+                                   				<a href="{% url 'update_review' i.id%}" class="text-decoration-none text-black"><i
+                                           			class="fa-solid fa-pen-to-square fa-lg"></i></a>
+                               					</div>
+											<div class="dropdown showmore-div">
+												<button
+													class="btn btn-outline-none dropdown-toggle position-relative d-flex justify-content-center align-items-center"
+													type="button" data-bs-toggle="dropdown" aria-expanded="false">
+													<i class="vertical-dot bi bi-three-dots-vertical pl-1 "></i>
+												</button>
+												<ul class="dropdown-menu showmore-opt p-0"
+													style="border: 1px solid rgb(211, 238, 252);background-color: rgb(206, 236, 252);width: 50px;font-size: 10px;transform: translate(27px, 43px);">
+													<li><a class="dropdown-item" id='{{i.id}}' onclick='downloadPDF(event)'>Download</a></li>
+
+													<li><a class="dropdown-item" href="">Add to Favourite</a></li>
+												</ul>
+											</div>
+										</div>
+									</td>						
+
+								</a>
+							</tr>
+							{% endfor %} -->
+
+							<!-- <tr class="request-table font-weight-bold" style="padding: 10px;">
+								<a href="#">
+									<td class="flex">
+										<fieldset>
+											<div>
+												<input type="checkbox" class="form-check-input ms-1" style=" width: 20px; height:20px;margin-top: 0;position:relative;" value="false" id="selectAllCheckbox">
+												<span class="ps-3 font-weight-normal">gfdg</span>
+											</div> 
+										</fieldset>
+									</td>
+									<td class="font-weight-normal" style="width:146px">dfgsg</td>
+									<td class="font-weight-normal">dfgfdgfdg</td>
+									<td class="font-weight-normal" style="width:230px">dfggfsd</td> 
+									<td class="font-weight-normal"  style="width:110px">
+										sgsdfggfd
+									</td>
+									<td class="font-weight-normal review-status-td"  style="width:100px">
+										<div class="review-status text-white " >Done</div>
+									</td>
+									<td class="p-0"  style="width:100px">
+										<div class="d-flex justify-content-start align-items-center">
+											<div class="dropdown delete-div ps-xxl-0 ps-xl-0 ps-lg-0 ps-md-2 ps-sm-2 ps-2">
+												<button
+													class="btn btn-outline-none dropdown-toggle position-relative d-flex justify-content-center align-items-center"
+													type="button" data-bs-toggle="dropdown" aria-expanded="false"
+													>
+													<i class="delete-req fa-solid fa-trash-can fa-lg px-1 "></i>
+												</button>
+												<ul class="dropdown-menu del-conf-ul rounded-2"
+													style="border: 1px solid orangered;background-color: rgb(245, 245, 245);">
+													<li>
+														<a class="dropdown-item" href="#">
+															<div class="del-conf">
+																<h6 class="text-black d-flex justify-content-center align-items-center px-1 fw-bolder fs-6">
+																	Are you sure?
+																</h6>
+																<div class="row w-100 m-0">
+																	<div class="col-6 d-flex justify-content-center align-items-center del-opt del-opt-yes">
+																		<a href="#" class="text-black" style="margin-top:2px;">
+																		<div  class="font-weight-bold px-1 rounded-1" style="font-size: 11px; height: 20px;border:1px solid black;padding: 2px;">
+																			 Yes
+																		  </div> </a>
+																	</div>
+																	<div class="col-6 d-flex justify-content-center align-items-center del-opt del-opt-no">
+																		<a href="#" class="text-black" 	style="margin-top:2px;">
+																		<div class=" font-weight-bold px-1 rounded-1 bord" style="font-size: 11px; height: 20px;border:1px solid black;padding: 2px;" data-bs-dismiss="del-conf-ul">
+																			 No 
+																		 </div></a>
+																	</div>
+																</div>
+															</div>
+														</a>
+													</li>
+												</ul>
+											</div>
+											<div
+                                   				class="edit-div pe-1 d-flex justify-content-center align-items-center position-relative ">
+                                   				<a href="#" class="text-decoration-none text-black"><i
+                                           			class="fa-solid fa-pen-to-square fa-lg"></i></a>
+                               					</div>
+											<div class="dropdown showmore-div">
+												<button
+													class="btn btn-outline-none dropdown-toggle position-relative d-flex justify-content-center align-items-center"
+													type="button" data-bs-toggle="dropdown" aria-expanded="false">
+													<i class="vertical-dot bi bi-three-dots-vertical pl-1 "></i>
+												</button>
+												<ul class="dropdown-menu showmore-opt p-0"
+													style="border: 1px solid rgb(211, 238, 252);background-color: rgb(206, 236, 252);width: 50px;font-size: 10px;transform: translate(27px, 43px);">
+													<li><a class="dropdown-item" id='{{i.id}}' onclick='downloadPDF(event)'>Download</a></li>
+
+													<li><a class="dropdown-item" href="">Add to Favourite</a></li>
+												</ul>
+											</div>
+										</div>
+									</td>						
+
+								</a>
+							</tr> -->
+
+						</tbody>
+					</table>
+				</div>
+
+				<!-- pagination start -->
+				<div class="row pre-next-btn mt-2" id="pagintab">
+					<div class="col-4 d-flex align-items-center justify-content-start">
+						<button id="previousPageBtn" data-page="" class="btn btn-outline-dark pag-btn" style="height: 30px">Previous</button>
+					</div>
+
+					<div class="col-4 d-flex align-items-center justify-content-center text-black font-weight-bold"
+						style="user-select: none;">
+						<span>Page <span id="currentPage"></span> of <span id="all_pages"></span></span>
+					</div>
+
+					<div class="col-4 d-flex align-items-center justify-content-end">
+						<button id="nextPageBtn"  data-page="2" class="btn btn-outline-dark pag-btn" style="height: 30px">Next</button>
+					</div>
+				</div>
+				<!-- pagination end -->
+
+			</section>
+			<!-- Data list view end -->
+		</div>
+	</div>
+<script>
+
+		$(document).ready(function () {
+			$('#submitabststandard').hide();
+			$('#uploadabststandard').change(function () {
+				if ($(this).val()) {
+					$('#submitabststandard').show();
+					$('#submitabstrecent').hide();
+					$('#uploadabstrecent').val('');
+				} else {
+					$('#submitabststandard').hide();
+				}
+			});
+
+			$('#submitabststandard').click(function (e) {
+				e.stopPropagation();//Prevent the click event from propagating to the document
+				window.location.href = 'dashboard/create_review.html';
+			});
+
+			$('.model_field').click(function (e) {
+				e.stopPropagation(); // Prevent click events from propagating within the module
+			});
+
+			// Add a click event listener to the document to hide 'update and data'
+			$(document).click(function () {
+				$('#submitabststandard').hide();
+				$('#uploadabststandard').val('');
+			});
+
+			// for recent request......
+
+			$('#submitabstrecent').hide();
+			$('#uploadabstrecent').change(function () {
+				if ($(this).val()) {
+					$('#submitabstrecent').show();
+					$('#submitabststandard').hide();
+					$('#uploadabststandard').val('');
+				} else {
+					$('#submitabstrecent').hide();
+				}
+			});
+
+			$('#submitabstrecent').click(function (e) {
+				e.stopPropagation();// Prevent the click event from propagating to the document 
+				window.location.href = 'dashboard/create_review.html';
+			});
+
+			// Add a click event listener to the document to hide 'update and data' 
+			$(document).click(function () {
+				$('#submitabstrecent').hide();
+				$('#uploadabstrecent').val('');
+			});
+
+		});
+
+		// To select a request by its ID
+		function showModal(event) {
+			const standard_requestID = document.getElementById("standard_requestID");
+			const modalNameForReview = document.getElementById("modalNameForReview");
+
+			standard_requestID.value = event.target.id;
+			modalNameForReview.innerText = event.target.dataset.modulename;
+
+			$.ajax({
+				type: "GET",
+				url: `/getCustomRequestForReview/${event.target.id}`,
+				headers: {
+					'X-CSRFToken': '{% csrf_token %}'
+				},
+				success: function (response) {
+					// Handle the successful response from the server 
+					if (response.success) {
+						$('#customRequestForReview').empty();
+						var data = JSON.parse(response.data)
+						if (data.length === 0) {
+							$('#customRequestForReview').empty().append('<div class="request-element"><div class="stnreq-1 fw-2 position-relative d-flex justify-content-center align-items-center mt-1" style="border: 1px solid rgb(207, 205, 205);"></div><p class="stnreq-2title ps-1" style="width: 130px;">No Request Found</p></div>');
+
+						} else {
+							$('#customRequestForReview .text-muted').hide();
+
+							data.reverse().forEach(element => {
+
+								const label = $('<label>').addClass('select_request btn btn-primary btn-sm').attr({
+									type: 'button',
+									for: `user_${element.pk}`
+								}).text("Select");
+
+								const input = $('<input>').attr({
+									type: 'radio',
+									name: "request_name",
+									id: `user_${element.pk}`,
+									required: 'true'
+								}).val(element.pk);
+
+								const reqtitle = $('<p>').addClass("stnreq-2title ps-1 m-0").attr({
+									style: "width: 130px;",
+									for: `user_${element.pk}`
+
+								}).text(`${element.fields.request_name.slice(0, 15)}...`)
+
+								const container2 = $('<div>').addClass('stnreq-3 position-relative d-flex justify-content-center align-items-center').attr({
+									style: "border: 1px solid rgb(207, 205, 205);",
+								}).append(label, input);
+								const container1 = $('<div>').addClass('request-element mr-1').append(container2, reqtitle);
+								$("#customRequestForReview").append(container1);
+							});
+						}
+					}
+				},
+				error: function (xhr, status, error) {
+					// Handle any errors that occurred during the Ajax request       
+					console.error('AJAX Error:', xhr.statusText);
+					console.error('Server Response:', xhr.responseText);
+				}
+			});
+		}
+
+		const downloadPDF = (event) => {
+	
+			requestId = event.target.id;
+			$.ajax({
+				type: "POST",
+				url: `/create_review_pdf/`,
+				headers: {
+					'X-CSRFToken': '{% csrf_token %}'
+				},
+				responseType: 'text',
+				data: {
+					id: requestId,
+				},
+				success: function (data) {
+					// Decode the base64 data to binary
+					var binaryData = atob(data);
+
+					// Create a Blob from the binary data
+					var blob = new Blob([new Uint8Array(binaryData.split('').map(function (char) {
+						return char.charCodeAt(0);
+					}))], { type: 'application/pdf' });
+
+					// Use the Blob URL directly
+					var blobUrl = URL.createObjectURL(blob);
+
+					// Create a hidden anchor element to trigger the download
+					var link = document.createElement('a');
+					link.href = blobUrl;
+					link.download = 'sample.pdf';
+					link.style.display = 'none';
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+				},
+				error: function (xhr, status, error) {
+					// Handle any errors that occurred during the Ajax request
+					console.error('AJAX Error:', xhr.statusText);
+					console.error('Server Response:', xhr.responseText);
+				}
+			});
+		}		 
+
+		$(document).on("load",fetchData(1))
+		
+		$('#nextPageBtn').on('click', function (e) {
+			e.preventDefault();
+			const fav = document.getElementById('bookmark').checked
+      var page = e.target.dataset.page
+      if (fav) {
+         fetchData(page, true);
+      }else if(fav === false){
+         fetchData(page, false);
+      }
+		 });
+
+		 $('#previousPageBtn').on('click', function (e) {
+			e.preventDefault();
+			 const fav = document.getElementById('bookmark').checked
+      var page = e.target.dataset.page
+      if (fav) {
+         fetchData(page, true);
+      }else if(fav === false){
+         fetchData(page, false);
+      }
+		 });
+
+function bookmark(event) {
+      if (event.target.checked) {
+         fetchData(1, true);
+      }else{
+         fetchData(1, false);
+      }
+   }
+ 
+
+		function fetchData(page=1,is_fav=false) {
+			$('#tableBody').empty();
+
+			// AJAX request to fetch the next or previous set of reviews 
+			$.ajax({
+				url: `?page=${page}${is_fav?'&fav=true':''}`,
+				type: 'GET',
+				success: function (data) {
+					
+					const reviews = JSON.parse(data.reviewList);
+					const current_page = data.current_page;
+					const all_pages = data.all_pages;
+					const has_next = data.has_next;
+					const next_page_number = data.next_page_number;
+					const has_previous = data.has_previous;
+					const previous_page_number = data.previous_page_number;
+ 
+					
+					reviews.forEach(element => {
+
+						const originalDateString = element.fields.created_at;
+						const originalDate = new Date(originalDateString);
+						const is_favorite= element.fields.is_favorite
+
+
+						const day = originalDate.getDate().toString().padStart(2, '0');
+						const month = (originalDate.getMonth() + 1).toString().padStart(2, '0');
+						const year = originalDate.getFullYear();
+
+						const formattedDate = `${day}-${month}-${year}`;
+						const tableRow = `<tr class="request-table font-weight-bold" style="padding: 10px;">
+							<a href="#">
+								<td class="flex">
+									<fieldset>
+										<div>
+											<input type="checkbox" class="form-check-input ms-1 selecteditem" style=" width: 20px; height:20px;margin-top: 0;position:relative;" value="false" id="${element.pk}">
+											<span class="ps-3 font-weight-normal">${formattedDate}</span>
+										</div> 
+									</fieldset>
+								</td>
+								<td class="font-weight-normal" style="width:146px" id='review_name_${element.pk}'>${element.fields.review_name}</td>
+								<td class="font-weight-normal">${element.fields.request_name}</td>
+								<td class="font-weight-normal" style="width:230px">${element.fields.docx_file.length>= 30 ?`${element.fields.docx_file.substring(0,30)}...`: element.fields.docx_file}</td> 
+								<td class="font-weight-normal" style="width:110px">${element.fields.review_type}</td>
+								<td class="font-weight-normal review-status-td"  style="width:100px"><div class="review-status text-white " >Done</div>
+								</td>
+								<td class="p-0"  style="width:100px">
+									<div class="d-flex justify-content-start align-items-center">
+										<div class="dropdown delete-div ps-xxl-0 ps-xl-0 ps-lg-0 ps-md-2 ps-sm-2 ps-2">
+											<button
+												class="btn btn-outline-none dropdown-toggle position-relative d-flex justify-content-center align-items-center"
+												type="button" data-bs-toggle="dropdown" aria-expanded="false">
+												<i class="delete-req fa-solid fa-trash-can fa-lg px-1 "></i>
+											</button>
+											<ul class="dropdown-menu del-conf-ul rounded-2"
+												style="border: 1px solid orangered;background-color: rgb(245, 245, 245);">
+												<li>
+													<a class="dropdown-item" href="#">
+														<div class="del-conf">
+															<h6 class="text-black d-flex justify-content-center align-items-center px-1 fw-bolder fs-6">
+																Are you sure?
+															</h6>
+															<div class="row w-100 m-0">
+																<div class="col-6 d-flex justify-content-center align-items-center del-opt del-opt-yes">
+																	<a href="/delete_review/${element.pk}" class="text-black" style="margin-top:2px;">
+																	<div  class="font-weight-bold px-1 rounded-1" style="font-size: 11px; height: 20px;border:1px solid black;padding: 2px;"> Yes
+																		</div> </a>
+																</div>
+																<div class="col-6 d-flex justify-content-center align-items-center del-opt del-opt-no">
+																	<a href="#" class="text-black" 	style="margin-top:2px;">
+																	<div class=" font-weight-bold px-1 rounded-1 bord" style="font-size: 11px; height: 20px;border:1px solid black;padding: 2px;" data-bs-dismiss="del-conf-ul">
+																			No 
+																		</div></a>
+																</div>
+															</div>
+														</div>
+													</a>
+												</li>
+											</ul>
+										</div>
+										<div
+											class="edit-div pe-1 d-flex justify-content-center align-items-center position-relative ">
+											<a href="/update_review/${element.pk}" class="text-decoration-none text-black"><i
+												class="fa-solid fa-pen-to-square fa-lg"></i></a>
+											</div>
+										<div class="dropdown showmore-div">
+											<button
+												class="btn btn-outline-none dropdown-toggle position-relative d-flex justify-content-center align-items-center"
+												type="button" data-bs-toggle="dropdown" aria-expanded="false">
+												<i class="vertical-dot bi bi-three-dots-vertical pl-1 "></i>
+											</button>
+											<ul class="dropdown-menu showmore-opt p-0"
+												style="border: 1px solid rgb(211, 238, 252);background-color: rgb(206, 236, 252);width: 50px;font-size: 10px;transform: translate(27px, 43px);">
+												<li><a class="dropdown-item" id='${element.pk}' onclick='downloadPDF(event)'>Download</a></li>
+
+												   ${is_favorite 
+                                 ? `<li><a class="dropdown-item truevalue text-danger" id="${element.pk}" onclick="toggleFavorite(event, false)">Remove Favorite</a></li>` 
+                                 : `<li><a class="dropdown-item" id="${element.pk}" onclick="toggleFavorite(event, true)">Add Favorite</a></li>`
+                              }
+												</ul>
+										</div>
+									</div>
+								</td>						
+							</a>
+						</tr>`;
+						$('#tableBody').append(tableRow)
+					});
+
+					if (has_next) {
+						$('#nextPageBtn').show();
+						$('#nextPageBtn').attr('data-page', next_page_number)
+					 }else if(has_next == false){
+						$('#nextPageBtn').hide();
+					 }
+		  
+					 if (has_previous) {
+						$('#previousPageBtn').show();
+						$('#previousPageBtn').attr('data-page', previous_page_number)
+					 }else if(has_previous == false){
+						$('#previousPageBtn').hide();
+					 }
+		  
+					 $('#currentPage').text(current_page);
+					 $('#all_pages').text(all_pages);
+
+				},
+				error: function (error) { 
+				}
+			});
+		}
+
+
+////////////////////////////////////////////////////////////////
+$(document).ready(function () {
+	
+		let selectedIds = [];
+      $('#selectAllCheckbox').on('click', function () {
+		selectedIds=[]
+         $('.selecteditem:checked').each(function () {
+            selectedIds.push($(this).attr('id'));
+			
+         });
+      });
+
+      $('.selecteditem').on('click', function () {
+         if ($(this).prop('checked')) {
+            let id = $(this).attr('id');
+            selectedIds.push(id);
+         } else {
+            let id = $(this).attr('id');
+            let index = selectedIds.indexOf(id);
+            if (index !== -1) {
+               selectedIds.splice(index, 1); 	
+            }
+         }
+      });
+	 $('#trashbin').on('click', function () {
+        if (selectedIds.length > 0) {
+             $('#display_review_name').empty();
+            selectedIds.forEach(id => {
+                const request_name = document.getElementById(`review_name_${id}`);
+                $('#display_review_name').append(request_name.innerText + '<br>');
+            });
+
+        }
+		else{
+			$('#display_review_name').empty();
+			$('#display_review_name').html('No Review Selected')
+
+		}
+});
+      $('#deleteselected').on('click', function () {
+         $.ajax({
+            type: "POST",
+            url: "/delete_all_review/",
+            headers: {
+               'X-CSRFToken': '{% csrf_token %}'
+            },
+            dataType: 'json',
+            data: {
+               'selected_ids[]': selectedIds 
+            },
+            success: function (data) {
+               location.reload();
+            },
+            error: function (xhr, status, error) {
+               console.error("AJAX request failed:", status, error);
+               location.reload();
+            }
+         });
+
+      });
+   });
+////////////////////////////////////////////////////////////////
+ const toggleFavorite = (event, isAdding) => {
+      const requestId = event.target.id;      
+      $.ajax({
+         type: "POST",
+         url: `/add_favorite_review/`,
+         headers: {
+               'X-CSRFToken': '{% csrf_token %}'
+         },
+         responseType: 'json',
+         data: {
+               id: requestId,
+               isFavorite: isAdding
+         },
+         success: function (data) {
+            const currentPage = document.getElementById('currentPage').innerText;
+            if (document.getElementById('bookmark').checked) {
+               fetchData(currentPage, true)
+            }else{
+               fetchData(currentPage)
+            }
+         },
+         error: function (xhr, status, error) {
+               console.error('AJAX Error:', xhr.statusText);
+               console.error('Server Response:', xhr.responseText);
+         }
+      });
+   };
+</script>
+</div>
+<!-- END: Content-->
+{% endblock %}
+<!-- 
+	{% comment %} <script>
+
+		function loadNextPage() {
+			const currentPage = parseInt(document.getElementById('current-page').textContent);  	
+			console.log(currentPage)
+			const nextPage = currentPage + 1;
+			window.location.href = `?page=${nextPage}`;
+		}
+	
+		function loadPreviousPage() {
+			const currentPage = parseInt(document.getElementById('current-page').textContent);
+			// console.log(currentPage)
+			if (currentPage > 1) {
+				const previousPage = currentPage - 1;
+				window.location.href = `?page=${previousPage}`;
+			}
+		}
+	
+		document.getElementById('nextButton').addEventListener('click', loadNextPage);
+		document.getElementById('prevButton').addEventListener('click', loadPreviousPage);
+	</script> {% endcomment %}
+ -->

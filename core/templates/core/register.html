@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>signup</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="shortcut icon" href="/static/app-assets/images/ico/favicon.ico" type="image/x-icon">
+        <style>
+            .divider {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .divider-line {
+                flex: 1;
+                border-bottom: 1px solid #979797;
+                margin: 0 0.7em;
+            }
+
+            .custom-button {
+                height: 40px;
+                width: 25%;
+                border-radius: 20px;
+            }
+
+            .custom-input {
+                width: 70%;
+            }
+        </style>
+    </head>
+
+    <body>
+        <nav class="mt-2 mb-2 navbar-expand-lg navbar navbar-with-menu floating-nav navbar-dark navbar-shadow">
+            <div class="navbar-wrapper">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-secondary rounded-circle p-3 mr-3 ml-3"></button>
+                    <h3 class="m-0" style="color: rgb(21, 21, 110);">CYR</h3>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 ">
+
+                    <div class="form-group text-center">
+                        <h5>Create New Account</h5>
+                    </div>
+                    <div class="form-group text-center">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <button class="btn btn-outline-primary" style="border-radius: 20px;">
+                                <img src="/static/assets/img/google.svg" alt="Google Icon"
+                                    width="20" height="20" class="mr-2">
+                                Login with Google
+                            </button>
+                            <button class="btn btn-outline-info ml-3" style="border-radius: 20px;">
+                                <img src="/static/assets/img/microsoft.svg"
+                                    alt="Microsoft Icon" width="20" height="20" class="mr-2">
+                                Login with Microsoft
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <div class="col-10 col-sm-10 col-md-10 col-lg-10 mb-2">
+                            <span style="display: flex; align-items: center;">
+                                <span class="divider-line"></span>
+                                or
+                                <span class="divider-line"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-11 ml-3">
+                        <form method='POST'>
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="username" class="ml-3">{{form.username.label}}</label>
+                                {{form.username}}
+                                {% if form.username.errors %}
+                                {% for error in form.username.errors %}
+                                {{ error }}
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="ml-3">{{form.full_name.label}}</label>
+                                {{form.full_name}}
+                                {% if form.full_name.errors %}
+                                {% for error in form.full_name.errors %}
+                                {{ error }}
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="ml-3">{{form.email.label}}</label>
+                                {{form.email}}
+                                {% if form.email.errors %}
+                                {% for error in form.email.errors %}
+                                {{ error }}
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="password" class="ml-3">{{form.password1.label}}</label>
+                                    {{form.password1}}
+                                    {% if form.password1.errors %}
+                                    {% for error in form.password1.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="confirmPassword" class="ml-3">{{form.password2.label}}</label>
+                                    {{form.password2}}
+                                    {% if form.password2.errors %}
+                                    {% for error in form.password2.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group d-flex justify-content-center">
+
+                                <button type="submit" class="btn btn-primary custom-button">
+                                    Sign Up
+                                </button>
+
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="form-group text-center mt-1">
+                        <h7> <a href="{% url 'userLogin' %}">Already Have a Account?</a> </h7>
+                    </div>
+
+                    <div class="card text-center" style="background-color: rgb(103, 166, 221);">
+                        <div class="card-body">
+                            <h6>Click Here For</h6>
+                            <h4>Instant Review</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 ">
+                    <div>
+                        <img src="/static/assets/img/login-main.png" alt="abstract"
+                            style="height: 78%; width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+
+</html>

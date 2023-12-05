@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>login</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="shortcut icon" href="/static/app-assets/images/ico/favicon.ico" type="image/x-icon">
+        <style>
+            .divider {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .divider-line {
+                flex: 1;
+                border-bottom: 1px solid #979797;
+                margin: 0 0.7em;
+            }
+
+            .custom-input {
+                height: 50px;
+                width: 70%;
+                border-radius: 20px;
+            }
+
+            .custom-button {
+                height: 40px;
+                width: 25%;
+                border-radius: 20px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <nav class="mt-2 mb-2 navbar-expand-lg navbar navbar-with-menu floating-nav navbar-dark navbar-shadow">
+            <div class="navbar-wrapper">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-secondary rounded-circle p-3 mr-3 ml-3"></button>
+                    <h3 class="m-0" style="color: rgb(21, 21, 110);">CYR</h3>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+
+                    <div class="form-group text-center">
+                        <h5>Log Into Your Account</h5>
+                    </div>
+                    <div class="form-group text-center">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <button class="btn btn-outline-primary" style="border-radius: 20px;">
+                                <img src="/static/assets/img/google.svg" alt="Google Icon"
+                                    width="20" height="20" class="mr-2">
+                                Login with Google
+                            </button>
+                            <button class="btn btn-outline-info ml-3" style="border-radius: 20px;">
+                                <img src="/static/assets/img/microsoft.svg"
+                                    alt="Microsoft Icon" width="20" height="20" class="mr-2">
+                                Login with Microsoft
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <div class="col-10 col-sm-10 col-md-10 col-lg-10 mb-2">
+                            <span style="display: flex; align-items: center;">
+                                <span class="divider-line"></span>
+                                or
+                                <span class="divider-line"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <form method='POST'>
+                        {% csrf_token %}
+                        {% if form.errors %}
+                        {% for error in form.non_field_errors %}
+                        <div class="form-group d-flex justify-content-center">
+                            <span class="small text-danger text-center">
+                                {{error}}
+                            </span>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+
+                        <div class="form-group d-flex justify-content-center">
+                            {{form.username}}
+                            {% if form.username.errors %}
+                            {% for error in form.username.errors %}
+                            {{error}}
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group d-flex justify-content-center">
+                            {{form.password}}
+                            {% if form.password.errors %}
+                            {% for error in form.password.errors %}
+                            {{error}}
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group d-flex justify-content-center">
+                            <button type="submit" class="btn btn-primary custom-button">
+                                Log In
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="form-group text-center mt-1">
+                        <h7><a href="#">Forgotten Account?</a> &nbsp; <a href="{% url 'userRegister' %}">Sign Up for
+                                Account</a> </h7>
+                    </div>
+
+                </div>
+                <div class="col-6 ">
+                    <div>
+                        <img src="/static/assets/img/login-main.png" alt="abstract"
+                            style="height: 78%; width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    </body>
+
+</html>
